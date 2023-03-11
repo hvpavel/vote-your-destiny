@@ -1,0 +1,36 @@
+<form [formGroup]="pollQuestion">
+  <mat-form-field appearance="outline">
+    <mat-label>Fill in your question</mat-label>
+    <input matInput formControlName="question">
+  </mat-form-field>
+
+  <div class="options">
+    <div *ngFor="let option of options.controls; index as idx" class="option">
+      <mat-form-field appearance="fill" class="option__field">
+        <mat-label>Option {{ idx + 1 }}</mat-label>
+        <input matInput>
+        <button *ngIf="canDeleteOption" mat-icon-button matSuffix (click)="deleteOption(idx)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="options__actions">
+      <button
+        *ngIf="canAddMoreOptions"
+        mat-raised-button
+        type="button"
+        color="primary"
+        (click)="addOption()"
+      >
+        Add more
+      </button>
+    </div>
+  </div>
+</form>
+<div class="summary">
+  <span>
+    {{ options.length }}/{{ maxOptionsLength }} possible answers
+  </span>
+  <button mat-button color="warn" (click)="reset()">Reset</button>
+</div>

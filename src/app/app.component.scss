@@ -2,4 +2,14 @@
   display: block;
   background-color: #333;
   min-height: 100%;
+  color: #fff;
+}
+
+.content {
+  display: flex;
+}
+
+.column {
+  flex: 1;
+  padding: 1rem;
 }

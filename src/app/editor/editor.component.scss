@@ -1,0 +1,22 @@
+.options {
+  &__actions {
+    margin-bottom: 1rem;
+  }
+}
+
+.option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  &__field {
+    width: 100%;
+  }
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
