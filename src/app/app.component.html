@@ -1,12 +1,16 @@
-<mat-toolbar color="primary">
-  Give your opinion
+<mat-toolbar color="primary" class="mat-elevation-z2">
+  Your title could be here
 </mat-toolbar>
 
 <div class="content">
   <div class="column">
-    <div>Editor</div>
-    <app-editor></app-editor>
+    <app-editor (pollChange)="updatePoll($event)"></app-editor>
   </div>
-  <div class="column">Polls</div>
+  <div class="column">
+    <app-poll *ngIf="poll; else noPollReady" [poll]="poll"></app-poll>
+    <ng-template #noPollReady>
+      <div>No poll is ready</div>
+    </ng-template>
+  </div>
   <div class="column">Answers</div>
 </div>

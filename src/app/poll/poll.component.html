@@ -1,0 +1,8 @@
+<h2 *ngIf="poll.question">{{ poll.question }}</h2>
+<form>
+  <div *ngFor="let answer of poll.answers; index as idx">
+    <input type="radio" [id]="'answer-' + idx">
+    <label [for]="'answer-' + idx">{{ answer }}</label>
+  </div>
+</form>
+<button mat-raised-button color="primary" (click)="vote()">Vote</button>

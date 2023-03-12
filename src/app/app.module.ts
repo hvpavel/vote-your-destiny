@@ -10,11 +10,13 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { AppComponent } from './app.component';
 import { EditorComponent } from './editor/editor.component';
+import { PollComponent } from './poll/poll.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EditorComponent,
+    PollComponent,
   ],
   imports: [
     BrowserModule,

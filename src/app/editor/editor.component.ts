@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+
+import { Poll } from '../poll.models';
+import { PollForm } from './editor.models';
 
 @Component({
   selector: 'app-editor',
@@ -8,39 +12,102 @@ import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorComponent {
-  readonly maxOptionsLength = 10;
+  @Output()
+  pollChange = new EventEmitter<Poll | null>();
 
-  get options(): FormArray {
-    return this.pollQuestion.get('options') as FormArray;
+  readonly maxAnswers = 10;
+
+  readonly maxLength = 80;
+
+  readonly destroy$ = new Subject<void>();
+
+  get answers(): FormArray<FormControl<string | null>> {
+    return this.pollForm.controls.answers;
   }
 
-  get canAddMoreOptions(): boolean {
-    return this.options.length < this.maxOptionsLength;
+  get answerControls(): FormControl<string | null>[] {
+    return this.pollForm.controls.answers.controls;
   }
 
-  get canDeleteOption(): boolean {
-    return this.options.length > 1;
+  get canAddAnswer(): boolean {
+    return this.answers.length < this.maxAnswers;
   }
 
-  pollQuestion = new FormGroup({
-    question: new FormControl('', [Validators.required, Validators.maxLength(80)]),
-    options: new FormArray([
-      new FormControl(''),
-      new FormControl(''),
-    ]),
-  });
+  get canDeleteAnswer(): boolean {
+    return this.answers.length > 1;
+  }
 
-  addOption(): void {
-    if (this.options.length < this.maxOptionsLength) {
-      this.options.push(new FormControl(''));
+  pollForm: PollForm = this.makeEmptyPollForm();
+
+  private makeTextControl(): FormControl<string | null> {
+    return new FormControl('', [Validators.required, Validators.maxLength(this.maxLength)]);
+  }
+
+  private makeEmptyPollForm(): FormGroup {
+     const pollForm = new FormGroup({
+      question: this.makeTextControl(),
+      answers: new FormArray<FormControl<string | null>>([
+        this.makeTextControl(),
+        this.makeTextControl(),
+      ]),
+    });
+    return pollForm;
+  }
+
+  private preparePoll(): Poll | null {
+    if (this.pollForm.invalid) {
+      return null;
+    }
+
+    const answers: string[] = (this.pollForm.value.answers || []).filter(answer => !!answer) as string[];
+
+    if (answers.length < 2) {
+      return null;
+    }
+    const poll: Poll = {
+      question: this.pollForm.value.question as string,
+      answers,
+    };
+    return poll;
+  }
+
+  addAnswer(): void {
+    if (this.answers.length < this.maxAnswers) {
+      this.answers.push(this.makeTextControl());
     }
   }
 
-  deleteOption(optionIndex: number): void {
-    this.options.removeAt(optionIndex);
+  deleteAnswer(optionIndex: number): void {
+    this.answers.removeAt(optionIndex);
   }
 
   reset(): void {
-    this.pollQuestion.reset();
+    this.pollForm = this.makeEmptyPollForm();
+  }
+
+  ngOnInit(): void {
+    this.pollForm
+      .valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.pollChange.emit(this.preparePoll()))
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  hasRepetition(answerIdx: number): boolean {
+    const currentAnswer = this.answerControls[answerIdx].value;
+    if (currentAnswer === null || currentAnswer === '') {
+      return false;
+    }
+
+    for (let i = 0; i < answerIdx; i++) {
+      if (this.answerControls[i].value === currentAnswer) {
+        return true;
+      }
+    }
+    return false;
   }
 }

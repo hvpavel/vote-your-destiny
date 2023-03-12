@@ -1,10 +1,10 @@
-.options {
+.answers {
   &__actions {
     margin-bottom: 1rem;
   }
 }
 
-.option {
+.answer {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -19,4 +19,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.question {
+  width: 100%;
 }
