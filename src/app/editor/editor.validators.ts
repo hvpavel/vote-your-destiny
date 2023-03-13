@@ -1,22 +1,31 @@
-import { FormArray, FormControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 
 export function minNonEmptyValues(minNonEmptyValues: number): ValidatorFn {
   return (control) => {
-    if (!(control instanceof FormArray)) {
+    let childControls: AbstractControl[] = [];
+    let canBeChecked = false;
+    if (control instanceof FormArray) {
+      childControls = control.controls;
+      canBeChecked = true;
+    } else if (control instanceof FormGroup) {
+      childControls = Object.values(control.controls);
+      canBeChecked = true;
+    }
+
+    if (!canBeChecked) {
       return null;
     }
 
-    const formControls = control.controls.filter(control => control instanceof FormControl) as FormControl[];
-    const nonEmptyControls = formControls.filter(control => !!control.value);
+    childControls = childControls.filter(control => control instanceof FormControl && !!control.value);
 
-    if (nonEmptyControls.length >= minNonEmptyValues) {
+    if (childControls.length >= minNonEmptyValues) {
       return null;
     }
 
     return {
       minNonEmptyValues: {
         minNonEmptyValues,
-        nonEmptyValues: nonEmptyControls.length,
+        nonEmptyValues: childControls.length,
       },
     };
   };
