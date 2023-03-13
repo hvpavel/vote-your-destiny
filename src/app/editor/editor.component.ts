@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { cloneDeep, isEqual } from 'lodash-es';
+import { FormControl, FormGroup, FormRecord, Validators } from '@angular/forms';
+import { isEqual } from 'lodash-es';
 import { Subject, takeUntil } from 'rxjs';
 
-import { Poll } from '../poll.models';
+import { Poll, PollAnswer } from '../poll.models';
 import { PollForm } from './editor.models';
 import { minNonEmptyValues } from './editor.validators';
 
@@ -23,45 +23,29 @@ export class EditorComponent {
 
   readonly destroy$ = new Subject<void>();
 
-  get answers(): FormArray<FormControl<string | null>> {
-    return this.pollForm.controls.answers;
-  }
-
-  get answerControls(): FormControl<string | null>[] {
-    return this.pollForm.controls.answers.controls;
-  }
-
-  get canAddAnswer(): boolean {
-    return this.answers.length < this.maxAnswers;
-  }
+  private lastAnswerId = 0;
 
   pollForm: PollForm = this.makeEmptyPollForm();
 
-  private makeQuestionControl(): FormControl<string | null> {
+  private makeQuestionControl(): FormControl<string> {
     const textControl = this.makeTextControl();
     textControl.addValidators(Validators.required);
     return textControl;
   }
 
-  private makeTextControl(): FormControl<string | null> {
-    return new FormControl('', Validators.maxLength(this.maxLength));
+  private makeTextControl(): FormControl<string> {
+    return new FormControl('', { nonNullable: true, validators: Validators.maxLength(this.maxLength) });
   }
 
-  private makeEmptyPollForm(): FormGroup {
-     const pollForm = new FormGroup({
+  private makeEmptyPollForm(): PollForm {
+     const pollForm: PollForm = new FormGroup({
       question: this.makeQuestionControl(),
-      answers: new FormArray<FormControl<string | null>>([
-        this.makeTextControl(),
-        this.makeTextControl(),
-      ], minNonEmptyValues(2)),
+      answers: new FormGroup({
+        [this.nextAnswerId()]: this.makeTextControl(),
+        [this.nextAnswerId()]: this.makeTextControl(),
+      }, { validators: minNonEmptyValues(2) }),
     });
-    pollForm.setValue({
-      question: 'What is the capital of the UK?',
-      answers: [
-        'London',
-        'Liverpool',
-      ],
-    });
+
     return pollForm;
   }
 
@@ -70,21 +54,46 @@ export class EditorComponent {
       return null;
     }
 
-    const poll: Poll = cloneDeep(this.pollForm.value as Poll);
-    poll.answers = poll.answers.filter(answer => !!answer);
-    return poll;
+    const answers: PollAnswer[] = [];
+
+    for (let [answerId, answer] of Object.entries(this.pollForm.value.answers || {})) {
+      if (answer) {
+        answers.push({ id: answerId, answer });
+      }
+    }
+    return {
+      question: this.pollForm.value.question as string,
+      answers,
+    };
   }
 
   private lastPollEmitted: Poll | null = null;
 
+  private nextAnswerId(): string {
+    const nextId = ++this.lastAnswerId;
+    return nextId.toString();
+  }
+
+  answers(): FormRecord<FormControl<string>> {
+    return this.pollForm.controls.answers;
+  }
+
+  answersCount(): number {
+    return Object.keys(this.answers).length;
+  }
+
+  canAddAnswer(): boolean {
+    return this.answersCount() < this.maxAnswers;
+  }
+
   addAnswer(): void {
-    if (this.answers.length < this.maxAnswers) {
-      this.answers.push(this.makeTextControl());
+    if (this.canAddAnswer()) {
+      this.pollForm.controls.answers.addControl(this.nextAnswerId(), this.makeTextControl());
     }
   }
 
-  deleteAnswer(optionIndex: number): void {
-    this.answers.removeAt(optionIndex);
+  deleteAnswer(answerId: string): void {
+    this.pollForm.controls.answers.removeControl(answerId);
   }
 
   reset(): void {
@@ -92,14 +101,15 @@ export class EditorComponent {
   }
 
   hasRepetition(answerIdx: number): boolean {
-    const currentAnswer = this.answerControls[answerIdx].value;
+    const answerControls = Object.values(this.answers().controls);
+    const currentAnswer = answerControls[answerIdx].value;
 
-    if (currentAnswer === null || currentAnswer === '') {
+    if (!currentAnswer) {
       return false;
     }
 
     for (let i = 0; i < answerIdx; i++) {
-      if (this.answerControls[i].value === currentAnswer) {
+      if (answerControls[i].value === currentAnswer) {
         return true;
       }
     }

@@ -1,6 +1,6 @@
 <h2>{{ poll.question }}</h2>
 <div class="answers">
-  <app-chart-bar *ngFor="let answer of poll.answers; index as idx" [count]="pollResults[idx] || 0" [totalCount]="totalVotes">
-    {{ answer }}
+  <app-chart-bar *ngFor="let option of poll.answers; index as idx" [count]="pollResults[idx] || 0" [totalCount]="totalVotes">
+    {{ option.answer }}
   </app-chart-bar>
 </div>

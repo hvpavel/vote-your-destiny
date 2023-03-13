@@ -5,11 +5,11 @@
   </mat-form-field>
 
   <div class="answers">
-    <div *ngFor="let answer of answerControls; index as idx" class="answer">
+    <div *ngFor="let answer of pollForm.controls.answers.controls | keyvalue; index as idx" class="answer">
       <mat-form-field appearance="outline" [color]="hasRepetition(idx) ? 'accent' : 'primary'" class="answer__field">
         <mat-label>Answer {{ idx + 1 }}</mat-label>
-        <input matInput [formControl]="answer">
-        <button mat-icon-button color="primary" matSuffix (click)="deleteAnswer(idx)">
+        <input matInput [formControl]="answer.value">
+        <button mat-icon-button color="primary" matSuffix (click)="deleteAnswer(answer.key)">
           <mat-icon>delete</mat-icon>
         </button>
         <mat-hint *ngIf="hasRepetition(idx)">
@@ -17,8 +17,8 @@
         </mat-hint>
       </mat-form-field>
     </div>
-    <mat-hint *ngIf="answers.hasError('minNonEmptyValues')">
-      There should be at least {{ answers.getError('minNonEmptyValues').minNonEmptyValues }} non-empty answers.
+    <mat-hint *ngIf="answers().hasError('minNonEmptyValues')">
+      There should be at least {{ answers().getError('minNonEmptyValues').minNonEmptyValues }} non-empty answers.
     </mat-hint>
 
     <div class="answers__actions">
@@ -35,7 +35,7 @@
   </div>
 </form>
 <div class="summary">
-  <span class="summary__count">{{ answers.length }}/{{ maxAnswers }} possible answers</span>
+  <span class="summary__count">{{ answersCount }}/{{ maxAnswers }} possible answers</span>
   <div class="summary__actions">
     <button mat-button color="warn" (click)="reset()">Reset</button>
   </div>
