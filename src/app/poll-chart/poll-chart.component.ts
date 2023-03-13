@@ -5,25 +5,27 @@ import { Poll } from '../poll.models';
   selector: 'app-poll-chart',
   templateUrl: './poll-chart.component.html',
   styleUrls: ['./poll-chart.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollChartComponent implements OnChanges {
   @Input()
   poll!: Poll;
 
   @Input()
-  pollResults: Record<number, number> = {};
+  pollResults: Record<string, number> = {};
 
-  chartValues: Record<number, number> = {};
+  chartValues: Record<string, number> = {};
 
   totalVotes = 0;
 
   private updateChartValues(): void {
     this.chartValues = {};
 
-    this.totalVotes = this.poll.answers.reduce((acc, _, answerId,) => (this.pollResults[answerId] ?? 0) + acc, 0);
+    this.totalVotes = Object
+      .keys(this.poll.answers)
+      .reduce((acc, answerId) => (this.pollResults[answerId] ?? 0) + acc, 0);
 
-    this.poll.answers.forEach((_, answerId) => {
+    Object.keys(this.poll.answers).forEach(answerId => {
       if (this.totalVotes === 0) {
         this.chartValues[answerId] = 0;
       } else {

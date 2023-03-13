@@ -1,9 +1,4 @@
-export interface PollAnswer {
-  id: string;
-  answer: string;
-}
-
 export interface Poll {
   question: string;
-  answers: PollAnswer[];
+  answers: Record<string, string>;
 }
