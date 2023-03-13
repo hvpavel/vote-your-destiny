@@ -9,11 +9,11 @@
       <mat-form-field appearance="outline" [color]="hasRepetition(idx) ? 'accent' : 'primary'" class="answer__field">
         <mat-label>Answer {{ idx + 1 }}</mat-label>
         <input matInput [formControl]="answer">
-        <button *ngIf="canDeleteAnswer" mat-icon-button color="primary" matSuffix (click)="deleteAnswer(idx)">
+        <button mat-icon-button color="primary" matSuffix (click)="deleteAnswer(idx)">
           <mat-icon>delete</mat-icon>
         </button>
         <mat-hint *ngIf="hasRepetition(idx)">
-          Duplicate answer
+          Duplicate found!
         </mat-hint>
       </mat-form-field>
     </div>

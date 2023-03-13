@@ -33,10 +33,6 @@ export class EditorComponent {
     return this.answers.length < this.maxAnswers;
   }
 
-  get canDeleteAnswer(): boolean {
-    return this.answers.length > 1;
-  }
-
   pollForm: PollForm = this.makeEmptyPollForm();
 
   private makeTextControl(): FormControl<string | null> {
@@ -50,6 +46,13 @@ export class EditorComponent {
         this.makeTextControl(),
         this.makeTextControl(),
       ]),
+    });
+    pollForm.setValue({
+      question: 'What is the capital of the UK?',
+      answers: [
+        'London',
+        'Liverpool',
+      ],
     });
     return pollForm;
   }

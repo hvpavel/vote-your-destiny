@@ -1,8 +1,9 @@
 <h2 *ngIf="poll.question">{{ poll.question }}</h2>
 <form>
-  <div *ngFor="let answer of poll.answers; index as idx">
-    <input type="radio" [id]="'answer-' + idx">
-    <label [for]="'answer-' + idx">{{ answer }}</label>
-  </div>
+  <mat-radio-group [(ngModel)]="selectedAnswer">
+    <div *ngFor="let answer of poll.answers; index as idx">
+      <mat-radio-button [value]="answer">{{ answer }}</mat-radio-button>
+    </div>
+  </mat-radio-group>
 </form>
-<button mat-raised-button color="primary" (click)="vote()">Vote</button>
+<button mat-raised-button class="button" color="primary" (click)="voteAnswer()">Vote</button>

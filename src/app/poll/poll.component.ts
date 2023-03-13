@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Poll } from '../poll.models';
 
 @Component({
@@ -11,6 +11,14 @@ export class PollComponent {
   @Input()
   poll!: Poll;
 
-  vote(): void {
+  @Output()
+  vote = new EventEmitter<string>();
+
+  selectedAnswer: string | null = null;
+
+  voteAnswer(): void {
+    if (this.selectedAnswer) {
+      this.vote.emit(this.selectedAnswer);
+    }
   }
 }
