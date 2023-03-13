@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, FormRecord, Validators } from '@angular/forms';
-import { isEqual } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { Subject, takeUntil } from 'rxjs';
 
-import { Poll, PollAnswer } from '../poll.models';
+import { Poll } from '../poll.models';
 import { PollForm } from './editor.models';
 import { minNonEmptyValues } from './editor.validators';
 
@@ -54,11 +54,10 @@ export class EditorComponent {
       return null;
     }
 
-    const answers: PollAnswer[] = [];
-
-    for (let [answerId, answer] of Object.entries(this.pollForm.value.answers || {})) {
-      if (answer) {
-        answers.push({ id: answerId, answer });
+    const answers = cloneDeep(this.pollForm.value.answers || {}) as Record<string, string>;
+    for (let key of Object.keys(answers)) {
+      if (!answers[key]) {
+        delete answers[key];
       }
     }
     return {
@@ -79,7 +78,7 @@ export class EditorComponent {
   }
 
   answersCount(): number {
-    return Object.keys(this.answers).length;
+    return Object.keys(this.answers().controls).length;
   }
 
   canAddAnswer(): boolean {
