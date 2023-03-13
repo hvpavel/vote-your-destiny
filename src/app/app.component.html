@@ -13,7 +13,7 @@
     </ng-template>
   </div>
   <div class="column">
-    <app-poll-chart *ngIf="poll; else noChartReady" [poll]="poll" [pollResults]="pollResults"></app-poll-chart>
+    <app-poll-chart *ngIf="poll; else noChartReady" [poll]="poll" [votes]="pollResults"></app-poll-chart>
     <ng-template #noChartReady>
       <div>No poll is ready</div>
     </ng-template>

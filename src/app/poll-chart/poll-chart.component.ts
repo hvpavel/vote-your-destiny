@@ -12,7 +12,7 @@ export class PollChartComponent implements OnChanges {
   poll!: Poll;
 
   @Input()
-  pollResults: Record<string, number> = {};
+  votes: Record<string, number> = {};
 
   chartValues: Record<string, number> = {};
 
@@ -23,13 +23,13 @@ export class PollChartComponent implements OnChanges {
 
     this.totalVotes = Object
       .keys(this.poll.answers)
-      .reduce((acc, answerId) => (this.pollResults[answerId] ?? 0) + acc, 0);
+      .reduce((acc, answerId) => (this.votes[answerId] ?? 0) + acc, 0);
 
     Object.keys(this.poll.answers).forEach(answerId => {
       if (this.totalVotes === 0) {
         this.chartValues[answerId] = 0;
       } else {
-        this.chartValues[answerId] = (this.pollResults[answerId] ?? 0) / this.totalVotes * 100;
+        this.chartValues[answerId] = (this.votes[answerId] ?? 0) / this.totalVotes * 100;
       }
     });
   }
