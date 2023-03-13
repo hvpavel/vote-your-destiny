@@ -8,24 +8,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { StoreModule } from '@ngrx/store';
 
 import { AppComponent } from './app.component';
 import { EditorComponent } from './editor/editor.component';
 import { PollComponent } from './poll/poll.component';
-import { PollChartComponent } from './poll-chart/poll-chart.component';
-import { ChartBarComponent } from './chart-bar/chart-bar.component';
 import { pollReducer } from './state';
+import { ChartModule } from './chart/chart.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     EditorComponent,
     PollComponent,
-    PollChartComponent,
-    ChartBarComponent,
-
   ],
   imports: [
     BrowserModule,
@@ -38,8 +33,8 @@ import { pollReducer } from './state';
     MatIconModule,
     MatButtonModule,
     MatRadioModule,
-    MatProgressBarModule,
     StoreModule.forRoot({ poll: pollReducer }),
+    ChartModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
-import { Poll } from '../poll.models';
+import { Poll } from '../../poll.models';
 
 @Component({
   selector: 'app-poll-chart',
