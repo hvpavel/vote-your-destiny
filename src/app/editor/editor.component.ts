@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { Subject, takeUntil } from 'rxjs';
 
 import { Poll } from '../poll.models';
 import { PollForm } from './editor.models';
+import { minNonEmptyValues } from './editor.validators';
 
 @Component({
   selector: 'app-editor',
@@ -35,17 +37,23 @@ export class EditorComponent {
 
   pollForm: PollForm = this.makeEmptyPollForm();
 
+  private makeQuestionControl(): FormControl<string | null> {
+    const textControl = this.makeTextControl();
+    textControl.addValidators(Validators.required);
+    return textControl;
+  }
+
   private makeTextControl(): FormControl<string | null> {
-    return new FormControl('', [Validators.required, Validators.maxLength(this.maxLength)]);
+    return new FormControl('', Validators.maxLength(this.maxLength));
   }
 
   private makeEmptyPollForm(): FormGroup {
      const pollForm = new FormGroup({
-      question: this.makeTextControl(),
+      question: this.makeQuestionControl(),
       answers: new FormArray<FormControl<string | null>>([
         this.makeTextControl(),
         this.makeTextControl(),
-      ]),
+      ], minNonEmptyValues(2)),
     });
     pollForm.setValue({
       question: 'What is the capital of the UK?',
@@ -62,17 +70,12 @@ export class EditorComponent {
       return null;
     }
 
-    const answers: string[] = (this.pollForm.value.answers || []).filter(answer => !!answer) as string[];
-
-    if (answers.length < 2) {
-      return null;
-    }
-    const poll: Poll = {
-      question: this.pollForm.value.question as string,
-      answers,
-    };
+    const poll: Poll = cloneDeep(this.pollForm.value as Poll);
+    poll.answers = poll.answers.filter(answer => !!answer);
     return poll;
   }
+
+  private lastPollEmitted: Poll | null = null;
 
   addAnswer(): void {
     if (this.answers.length < this.maxAnswers) {
@@ -88,20 +91,9 @@ export class EditorComponent {
     this.pollForm = this.makeEmptyPollForm();
   }
 
-  ngOnInit(): void {
-    this.pollForm
-      .valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.pollChange.emit(this.preparePoll()))
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   hasRepetition(answerIdx: number): boolean {
     const currentAnswer = this.answerControls[answerIdx].value;
+
     if (currentAnswer === null || currentAnswer === '') {
       return false;
     }
@@ -112,5 +104,26 @@ export class EditorComponent {
       }
     }
     return false;
+  }
+
+  ngOnInit(): void {
+    this.pollForm
+      .valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const poll = this.preparePoll();
+
+        if (isEqual(this.lastPollEmitted, poll)) {
+          return;
+        }
+
+        this.lastPollEmitted = poll;
+        this.pollChange.emit(poll);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -17,6 +17,9 @@
         </mat-hint>
       </mat-form-field>
     </div>
+    <mat-hint *ngIf="answers.hasError('minNonEmptyValues')">
+      There should be at least {{ answers.getError('minNonEmptyValues').minNonEmptyValues }} non-empty answers.
+    </mat-hint>
 
     <div class="answers__actions">
       <button
