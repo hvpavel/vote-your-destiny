@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import { ChartData, ChartOptions } from 'chart.js';
+
 import { Poll } from '../../poll.models';
 
 @Component({
@@ -7,34 +9,27 @@ import { Poll } from '../../poll.models';
   styleUrls: ['./poll-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PollChartComponent implements OnChanges {
+export class PollChartComponent {
   @Input()
   poll!: Poll;
 
   @Input()
   votes: Record<string, number> = {};
 
-  chartValues: Record<string, number> = {};
+  readonly chartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    animation: false,
+    maintainAspectRatio: false,
+  };
 
-  totalVotes = 0;
-
-  private updateChartValues(): void {
-    this.chartValues = {};
-
-    this.totalVotes = Object
-      .keys(this.poll.answers)
-      .reduce((acc, answerId) => (this.votes[answerId] ?? 0) + acc, 0);
-
-    Object.keys(this.poll.answers).forEach(answerId => {
-      if (this.totalVotes === 0) {
-        this.chartValues[answerId] = 0;
-      } else {
-        this.chartValues[answerId] = (this.votes[answerId] ?? 0) / this.totalVotes * 100;
-      }
-    });
-  }
-
-  ngOnChanges(): void {
-    this.updateChartValues();
+  chartData(): ChartData<'bar'> {
+    const data: ChartData<'bar'> = {
+      labels: Object.values(this.poll.answers),
+      datasets: [{
+        data: Object.keys(this.poll.answers).map(answerId => this.votes[answerId] ?? 0),
+        label: 'Votes',
+      }],
+    }
+    return data;
   }
 }

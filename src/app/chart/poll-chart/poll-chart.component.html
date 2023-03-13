@@ -1,10 +1,10 @@
 <h2>{{ poll.question }}</h2>
 <div class="answers">
-  <app-chart-bar
-    *ngFor="let option of poll.answers | keyvalue"
-    [count]="votes[option.key] || 0"
-    [totalCount]="totalVotes"
-  >
-    {{ option.value }}
-  </app-chart-bar>
+  <canvas
+    class="answers__chart"
+    baseChart
+    [data]="chartData()"
+    [options]="chartOptions"
+    type="bar"
+  ></canvas>
 </div>
