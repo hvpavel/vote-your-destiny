@@ -1,5 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { combineLatest, filter, Observable } from 'rxjs';
+
 import { Poll } from './poll.models';
+import { selectPoll, pollUpdated, voteAdded, selectVotes } from './state';
 
 @Component({
   selector: 'app-root',
@@ -8,19 +12,22 @@ import { Poll } from './poll.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  poll: Poll | null = null;
+  poll$ = this.store.select(selectPoll);
 
-  pollResults: Record<number, number> = {};
+  votes$: Observable<Record<string, number>> = this.store.select(selectVotes);
 
-  updatePoll(poll: Poll | null): void {
-    this.poll = poll;
-    this.pollResults = {};
+  pollData$ = combineLatest({ poll: this.poll$, votes: this.votes$ }).pipe(
+    filter(data => !!data.poll),
+  ) as Observable<{ poll: Poll, votes: Record<string, number> }>;
+
+  constructor(private store: Store) {
   }
 
-  vote(answerIdx: number): void {
-    this.pollResults = {
-      ...this.pollResults,
-      [answerIdx]: (this.pollResults[answerIdx] ?? 0) + 1,
-    };
+  updatePoll(poll: Poll | null): void {
+    this.store.dispatch(pollUpdated({ poll }));
+  }
+
+  vote(answerId: number): void {
+    this.store.dispatch(voteAdded({ answerId: answerId }))
   }
 }

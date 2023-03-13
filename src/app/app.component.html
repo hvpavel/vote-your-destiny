@@ -7,13 +7,15 @@
     <app-editor (pollChange)="updatePoll($event)"></app-editor>
   </div>
   <div class="column">
-    <app-poll *ngIf="poll; else noPollReady" [poll]="poll" (vote)="vote($event)"></app-poll>
+    <app-poll *ngIf="poll$ | async; else noPollReady; let poll" [poll]="poll" (vote)="vote($event)"></app-poll>
     <ng-template #noPollReady>
       <div>No poll is ready</div>
     </ng-template>
   </div>
   <div class="column">
-    <app-poll-chart *ngIf="poll; else noChartReady" [poll]="poll" [votes]="pollResults"></app-poll-chart>
+    <ng-container *ngIf="pollData$ | async; else noChartReady; let pollData">
+      <app-poll-chart [poll]="pollData.poll" [votes]="pollData.votes"></app-poll-chart>
+    </ng-container>
     <ng-template #noChartReady>
       <div>No poll is ready</div>
     </ng-template>

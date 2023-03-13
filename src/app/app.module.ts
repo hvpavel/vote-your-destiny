@@ -16,6 +16,7 @@ import { EditorComponent } from './editor/editor.component';
 import { PollComponent } from './poll/poll.component';
 import { PollChartComponent } from './poll-chart/poll-chart.component';
 import { ChartBarComponent } from './chart-bar/chart-bar.component';
+import { pollReducer } from './state';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { ChartBarComponent } from './chart-bar/chart-bar.component';
     MatButtonModule,
     MatRadioModule,
     MatProgressBarModule,
-    StoreModule.forRoot({}, {}),
+    StoreModule.forRoot({ poll: pollReducer }),
   ],
   providers: [],
   bootstrap: [AppComponent]
