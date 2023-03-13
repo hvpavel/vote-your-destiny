@@ -1,0 +1,10 @@
+.answer {
+  & + & {
+    margin-top: 1rem;
+  }
+
+  &__count {
+    display: block;
+    text-align: center;
+  }
+}

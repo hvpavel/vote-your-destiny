@@ -18,6 +18,9 @@ export class AppComponent {
   }
 
   vote(answerIdx: number): void {
-    this.pollResults[answerIdx] = (this.pollResults[answerIdx] ?? 0) + 1;
+    this.pollResults = {
+      ...this.pollResults,
+      [answerIdx]: (this.pollResults[answerIdx] ?? 0) + 1,
+    };
   }
 }
