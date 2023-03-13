@@ -12,12 +12,12 @@ export class PollComponent {
   poll!: Poll;
 
   @Output()
-  vote = new EventEmitter<string>();
+  vote = new EventEmitter<number>();
 
-  selectedAnswer: string | null = null;
+  selectedAnswer: number | null = null;
 
   voteAnswer(): void {
-    if (this.selectedAnswer) {
+    if (this.selectedAnswer !== null) {
       this.vote.emit(this.selectedAnswer);
     }
   }

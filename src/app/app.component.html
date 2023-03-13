@@ -7,7 +7,7 @@
     <app-editor (pollChange)="updatePoll($event)"></app-editor>
   </div>
   <div class="column">
-    <app-poll *ngIf="poll; else noPollReady" [poll]="poll"></app-poll>
+    <app-poll *ngIf="poll; else noPollReady" [poll]="poll" (vote)="vote($event)"></app-poll>
     <ng-template #noPollReady>
       <div>No poll is ready</div>
     </ng-template>

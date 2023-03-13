@@ -10,7 +10,14 @@ import { Poll } from './poll.models';
 export class AppComponent {
   poll: Poll | null = null;
 
+  pollResults: Record<number, number> = {};
+
   updatePoll(poll: Poll | null): void {
     this.poll = poll;
+    this.pollResults = {};
+  }
+
+  vote(answerIdx: number): void {
+    this.pollResults[answerIdx] = (this.pollResults[answerIdx] ?? 0) + 1;
   }
 }
