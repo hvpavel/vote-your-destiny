@@ -27,16 +27,15 @@ export const selectVotesData = createSelector(
     }
 
     const votesData: Record<string, number> = {};
-    Object.entries(votes).forEach(([answerId, votesCount]) => {
-      if (poll.answers[answerId]) {
+    Object.keys(poll.answers).forEach(answerId => {
+      if (votes[answerId] > 0) {
         const answer = poll.answers[answerId];
-        votesData[answer] = votesCount;
+        votesData[answer] = votes[answerId];
       }
     });
 
-    return {
-      title: poll.question,
-      votes: votesData,
-    };
+    return Object.keys(votesData).length
+      ? { title: poll.question, votes: votesData }
+      : null;
   }
 );
