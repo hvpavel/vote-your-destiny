@@ -1,11 +1,30 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormRecord } from '@angular/forms';
-import { cloneDeep, isEqual } from 'lodash-es';
 import { Subject, takeUntil } from 'rxjs';
-import { PollFormBuilder } from '../poll-form-builder.service';
 
+import { PollFormBuilder } from '../poll-form-builder.service';
 import { Poll } from '../poll.models';
 import { PollForm } from './editor.models';
+
+/**
+ * hvpavel@
+ * import { cloneDeep, isEqual } from 'lodash-es';
+ *
+ * The two following functions replace the lodash-es import statement.
+ * For some unknown reason StackBlitz cannot see @types/lodash-es
+ * even though it is specified in package.json and installed
+ *
+ * These two functions, of course, cannot replace the original functions from lodash.
+ * They are, however, sufficient for the needs of EditorComponent
+ * and are only used to allow the project run on StackBlitz.
+ */
+function cloneDeep<T = any>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+function isEqual(v1: unknown, v2: unknown): boolean {
+  return JSON.stringify(v1) === JSON.stringify(v2);
+}
 
 @Component({
   selector: 'app-editor',
