@@ -1,10 +1,4 @@
 <h2>{{ poll.question }}</h2>
 <div class="chart">
-  <canvas
-    class="chart__canvas"
-    baseChart
-    [data]="chartData()"
-    [options]="chartOptions"
-    type="bar"
-  ></canvas>
+  <canvas #canvas class="chart__canvas"></canvas>
 </div>
