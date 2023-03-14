@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { Poll } from './poll.models';
 import { selectPoll, pollUpdated, voteAdded, selectVotes, resetData, selectVotesData } from './state';
