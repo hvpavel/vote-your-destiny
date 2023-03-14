@@ -23,7 +23,7 @@ I decided that a poll should have a following format:
 ```typescript
 interface Poll {
   question: string;
-  answer: {
+  answers: {
     [key: string]: string;
   };
 }
