@@ -1,14 +1,14 @@
 <form [formGroup]="pollForm">
   <mat-form-field appearance="fill" class="question">
     <mat-label>Your question</mat-label>
-    <input matInput formControlName="question">
+    <input matInput formControlName="question" appCharLimiter [maxlength]="maxLength">
   </mat-form-field>
 
   <div class="answers">
     <div *ngFor="let answer of pollForm.controls.answers.controls | keyvalue; index as idx" class="answer">
       <mat-form-field appearance="outline" [color]="hasRepetition(idx) ? 'accent' : 'primary'" class="answer__field">
         <mat-label>Answer {{ idx + 1 }}</mat-label>
-        <input matInput [formControl]="answer.value">
+        <input matInput [formControl]="answer.value" [maxlength]="maxLength">
         <button mat-icon-button color="primary" matSuffix (click)="deleteAnswer(answer.key)">
           <mat-icon>delete</mat-icon>
         </button>

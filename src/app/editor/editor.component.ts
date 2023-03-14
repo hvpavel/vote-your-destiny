@@ -23,9 +23,9 @@ export class EditorComponent {
 
   readonly destroy$ = new Subject<void>();
 
-  private lastAnswerId = 0;
-
   pollForm: PollForm = this.makeEmptyPollForm();
+
+  private lastAnswerId = 0;
 
   private makeQuestionControl(): FormControl<string> {
     const textControl = this.makeTextControl();
@@ -34,7 +34,7 @@ export class EditorComponent {
   }
 
   private makeTextControl(): FormControl<string> {
-    return new FormControl('', { nonNullable: true, validators: Validators.maxLength(this.maxLength) });
+    return new FormControl('', { nonNullable: true });
   }
 
   private makeEmptyPollForm(): PollForm {
