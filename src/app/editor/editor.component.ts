@@ -17,15 +17,22 @@ export class EditorComponent {
   @Output()
   pollChange = new EventEmitter<Poll | null>();
 
+  @Output()
+  reset = new EventEmitter<void>();
+
   readonly maxAnswers = 10;
 
   readonly maxLength = 80;
 
   readonly destroy$ = new Subject<void>();
 
-  pollForm: PollForm = this.makeEmptyPollForm();
+  pollForm: PollForm;
 
   private lastAnswerId = 0;
+
+  constructor() {
+    this.pollForm = this.makeEmptyPollForm();
+  }
 
   private makeQuestionControl(): FormControl<string> {
     const textControl = this.makeTextControl();
@@ -37,13 +44,17 @@ export class EditorComponent {
     return new FormControl('', { nonNullable: true });
   }
 
+  private makeAnswersGroupControl(): FormRecord<FormControl<string>> {
+    return new FormGroup({
+      [this.nextAnswerId()]: this.makeTextControl(),
+      [this.nextAnswerId()]: this.makeTextControl(),
+    }, { validators: minNonEmptyValues(2) });
+  }
+
   private makeEmptyPollForm(): PollForm {
      const pollForm: PollForm = new FormGroup({
       question: this.makeQuestionControl(),
-      answers: new FormGroup({
-        [this.nextAnswerId()]: this.makeTextControl(),
-        [this.nextAnswerId()]: this.makeTextControl(),
-      }, { validators: minNonEmptyValues(2) }),
+      answers: this.makeAnswersGroupControl(),
     });
 
     return pollForm;
@@ -95,8 +106,11 @@ export class EditorComponent {
     this.pollForm.controls.answers.removeControl(answerId);
   }
 
-  reset(): void {
-    this.pollForm = this.makeEmptyPollForm();
+  resetPoll(): void {
+    this.pollForm.setControl('answers', this.makeAnswersGroupControl(), { emitEvent: false });
+    this.pollForm.reset({}, { emitEvent: false });
+
+    this.reset.emit();
   }
 
   hasRepetition(answerIdx: number): boolean {

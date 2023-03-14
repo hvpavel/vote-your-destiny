@@ -6,7 +6,7 @@
 
 <div class="content">
   <div class="content__column" [class.content__column--active]="activeColumn === 0">
-    <app-editor (pollChange)="updatePoll($event)"></app-editor>
+    <app-editor (pollChange)="updatePoll($event)" (reset)="resetData()"></app-editor>
   </div>
   <div class="content__column" [class.content__column--active]="activeColumn === 1">
     <app-poll *ngIf="poll$ | async; else noPollReady; let poll" [poll]="poll" (vote)="vote($event)"></app-poll>

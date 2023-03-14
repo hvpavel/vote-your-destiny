@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { pollUpdated, voteAdded } from './app.actions';
+import { pollUpdated, resetData, voteAdded } from './app.actions';
 import { AppState } from './app.state';
 
 const initialState: AppState = {
@@ -8,7 +8,7 @@ const initialState: AppState = {
 };
 
 export const pollReducer = createReducer(
-  initialState,
+  { ...initialState },
   on(pollUpdated, (state, { poll }) => ({ ...state, poll })),
   on(voteAdded, (state, { answerId }) => ({
     ...state,
@@ -17,4 +17,5 @@ export const pollReducer = createReducer(
       [answerId]: (state.votes[answerId] ?? 0) + 1,
     },
   })),
+  on(resetData, () => ({ ...initialState })),
 );

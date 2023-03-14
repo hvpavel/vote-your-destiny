@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { combineLatest, filter, Observable } from 'rxjs';
 
 import { Poll } from './poll.models';
-import { selectPoll, pollUpdated, voteAdded, selectVotes } from './state';
+import { selectPoll, pollUpdated, voteAdded, selectVotes, resetData } from './state';
 
 @Component({
   selector: 'app-root',
@@ -35,5 +35,9 @@ export class AppComponent {
 
   setActiveColumn(column: number): void {
     this.activeColumn = column;
+  }
+
+  resetData(): void {
+    this.store.dispatch(resetData());
   }
 }
