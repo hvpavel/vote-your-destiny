@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, FormRecord, Validators } from '@angular/forms';
 
-import { PollForm } from './editor/editor.models';
-import { minNonEmptyValues } from './validators';
+import { PollForm } from './editor.models';
+import { minNonEmptyValues } from '../validators';
 
 @Injectable({ providedIn: 'root' })
 export class PollFormBuilder {

@@ -3,8 +3,8 @@ import { FormControl, FormRecord } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PollFormBuilder } from '../poll-form-builder.service';
-import { Poll } from '../poll.models';
-import { PollForm } from './editor.models';
+import { PollForm } from '../editor.models';
+import { Poll } from '../../poll.models';
 
 /**
  * hvpavel@
