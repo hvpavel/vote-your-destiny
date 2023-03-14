@@ -15,8 +15,8 @@
     </ng-template>
   </div>
   <div class="content__column" [class.content__column--active]="activeColumn === 2">
-    <ng-container *ngIf="pollData$ | async; else noChartReady; let pollData">
-      <app-poll-chart [title]="pollData.title" [votes]="pollData.votes"></app-poll-chart>
+    <ng-container *ngIf="votesData$ | async; else noChartReady; let votesData">
+      <app-poll-chart [title]="votesData.title" [votes]="votesData.votes"></app-poll-chart>
     </ng-container>
     <ng-template #noChartReady>
       <div>No poll is ready</div>

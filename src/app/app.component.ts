@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { combineLatest, map, Observable } from 'rxjs';
 
 import { Poll } from './poll.models';
-import { selectPoll, pollUpdated, voteAdded, selectVotes, resetData } from './state';
+import { selectPoll, pollUpdated, voteAdded, selectVotes, resetData, selectVotesData } from './state';
 
 @Component({
   selector: 'app-root',
@@ -16,22 +16,7 @@ export class AppComponent {
 
   votes$: Observable<Record<string, number>> = this.store.select(selectVotes);
 
-  pollData$ = combineLatest({ poll: this.poll$, votes: this.votes$ }).pipe(
-    map(({ poll, votes }) => {
-      if (!poll) {
-        return null;
-      }
-
-      const votesData: Record<string, number> = {};
-      Object.entries(votes).forEach(([answerId, votesCount]) => {
-        if (poll.answers[answerId]) {
-          const answer = poll.answers[answerId];
-          votesData[answer] = votesCount;
-        }
-      });
-      return { title: poll.question, votes: votesData };
-    }),
-  );
+  votesData$ = this.store.select(selectVotesData);
 
   activeColumn = 0;
 
