@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { FormControl, FormGroup, FormRecord, Validators } from '@angular/forms';
+import { FormControl, FormRecord } from '@angular/forms';
 import { cloneDeep, isEqual } from 'lodash-es';
 import { Subject, takeUntil } from 'rxjs';
+import { PollFormBuilder } from '../poll-form-builder.service';
 
 import { Poll } from '../poll.models';
 import { PollForm } from './editor.models';
-import { minNonEmptyValues } from './editor.validators';
 
 @Component({
   selector: 'app-editor',
@@ -28,36 +28,8 @@ export class EditorComponent {
 
   pollForm: PollForm;
 
-  private lastAnswerId = 0;
-
-  constructor() {
-    this.pollForm = this.makeEmptyPollForm();
-  }
-
-  private makeQuestionControl(): FormControl<string> {
-    const textControl = this.makeTextControl();
-    textControl.addValidators(Validators.required);
-    return textControl;
-  }
-
-  private makeTextControl(): FormControl<string> {
-    return new FormControl('', { nonNullable: true });
-  }
-
-  private makeAnswersGroupControl(): FormRecord<FormControl<string>> {
-    return new FormGroup({
-      [this.nextAnswerId()]: this.makeTextControl(),
-      [this.nextAnswerId()]: this.makeTextControl(),
-    }, { validators: minNonEmptyValues(2) });
-  }
-
-  private makeEmptyPollForm(): PollForm {
-     const pollForm: PollForm = new FormGroup({
-      question: this.makeQuestionControl(),
-      answers: this.makeAnswersGroupControl(),
-    });
-
-    return pollForm;
+  constructor(private pollFormBuilderService: PollFormBuilder) {
+    this.pollForm = this.pollFormBuilderService.makeEmptyPollForm();
   }
 
   private preparePoll(): Poll | null {
@@ -79,11 +51,6 @@ export class EditorComponent {
 
   private lastPollEmitted: Poll | null = null;
 
-  private nextAnswerId(): string {
-    const nextId = ++this.lastAnswerId;
-    return nextId.toString();
-  }
-
   answers(): FormRecord<FormControl<string>> {
     return this.pollForm.controls.answers;
   }
@@ -98,7 +65,7 @@ export class EditorComponent {
 
   addAnswer(): void {
     if (this.canAddAnswer()) {
-      this.pollForm.controls.answers.addControl(this.nextAnswerId(), this.makeTextControl());
+      this.pollFormBuilderService.addEmptyAnswerControl(this.pollForm);
     }
   }
 
@@ -107,7 +74,7 @@ export class EditorComponent {
   }
 
   resetPoll(): void {
-    this.pollForm.setControl('answers', this.makeAnswersGroupControl(), { emitEvent: false });
+    this.pollForm.setControl('answers', this.pollFormBuilderService.makeAnswersGroupControl(), { emitEvent: false });
     this.pollForm.reset({}, { emitEvent: false });
 
     this.reset.emit();
