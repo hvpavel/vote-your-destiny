@@ -51,6 +51,7 @@ $minThreeColumnWidth: $maxSingleColumnWidth + 1;
     flex: 1;
     padding: 1rem;
     max-width: 600px;
+    overflow: hidden auto;
 
     @media screen and (max-width: $maxSingleColumnWidth) {
 
