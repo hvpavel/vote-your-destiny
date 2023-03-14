@@ -20,6 +20,8 @@ export class AppComponent {
     filter(data => !!data.poll),
   ) as Observable<{ poll: Poll, votes: Record<string, number> }>;
 
+  activeColumn = 0;
+
   constructor(private store: Store) {
   }
 
@@ -29,5 +31,9 @@ export class AppComponent {
 
   vote(answerId: number): void {
     this.store.dispatch(voteAdded({ answerId: answerId }))
+  }
+
+  setActiveColumn(column: number): void {
+    this.activeColumn = column;
   }
 }

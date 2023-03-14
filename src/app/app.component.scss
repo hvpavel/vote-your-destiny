@@ -1,14 +1,50 @@
 :host {
-  display: block;
+  display: flex;
   min-height: 100%;
+  flex-direction: column;
+  background-color: #f0f0f0;
 }
+
+$maxSingleColumnWidth: 960px;
+$minThreeColumnWidth: $maxSingleColumnWidth + 1;
 
 .content {
   display: flex;
+  flex-grow: 1;
+  justify-content: center;
+
+  &__column {
+    flex: 1;
+    padding: 1rem;
+    overflow: hidden;
+    max-width: 600px;
+
+    @media screen and (max-width: $maxSingleColumnWidth) {
+      &:not(&--active) {
+        display: none;
+      }
+    }
+  }
+
+  @media screen and (max-width: $maxSingleColumnWidth) {
+    padding-bottom: 4rem;
+  }
 }
 
-.column {
-  flex: 1;
-  padding: 1rem;
-  overflow: hidden;
+.footer {
+  z-index: 1;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  &__content {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  @media screen and (min-width: $minThreeColumnWidth) {
+    display: none;
+  }
 }

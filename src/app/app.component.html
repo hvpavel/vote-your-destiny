@@ -1,18 +1,18 @@
-<mat-toolbar color="primary" class="mat-elevation-z2">
+<mat-toolbar class="header" color="primary" class="mat-elevation-z2">
   Your title could be here
 </mat-toolbar>
 
 <div class="content">
-  <div class="column">
+  <div class="content__column" [class.content__column--active]="activeColumn === 0">
     <app-editor (pollChange)="updatePoll($event)"></app-editor>
   </div>
-  <div class="column">
+  <div class="content__column" [class.content__column--active]="activeColumn === 1">
     <app-poll *ngIf="poll$ | async; else noPollReady; let poll" [poll]="poll" (vote)="vote($event)"></app-poll>
     <ng-template #noPollReady>
       <div>No poll is ready</div>
     </ng-template>
   </div>
-  <div class="column">
+  <div class="content__column" [class.content__column--active]="activeColumn === 2">
     <ng-container *ngIf="pollData$ | async; else noChartReady; let pollData">
       <app-poll-chart [poll]="pollData.poll" [votes]="pollData.votes"></app-poll-chart>
     </ng-container>
@@ -21,3 +21,19 @@
     </ng-template>
   </div>
 </div>
+
+<footer class="footer">
+  <mat-toolbar color="primary">
+    <div class="footer__content">
+      <button mat-icon-button [color]="activeColumn === 0 ? 'accent' : 'basic'" (click)="setActiveColumn(0)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button [color]="activeColumn === 1 ? 'accent' : 'basic'" (click)="setActiveColumn(1)">
+        <mat-icon>ballot</mat-icon>
+      </button>
+      <button mat-icon-button [color]="activeColumn === 2 ? 'accent' : 'basic'" (click)="setActiveColumn(2)">
+        <mat-icon>bar_chart</mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
+</footer>
