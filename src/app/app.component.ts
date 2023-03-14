@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, filter, Observable } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 
 import { Poll } from './poll.models';
 import { selectPoll, pollUpdated, voteAdded, selectVotes, resetData } from './state';
@@ -17,8 +17,13 @@ export class AppComponent {
   votes$: Observable<Record<string, number>> = this.store.select(selectVotes);
 
   pollData$ = combineLatest({ poll: this.poll$, votes: this.votes$ }).pipe(
-    filter(data => !!data.poll),
-  ) as Observable<{ poll: Poll, votes: Record<string, number> }>;
+    map(({ poll, votes }) => {
+      if (poll) {
+        return { poll, votes };
+      }
+      return null;
+    }),
+  );
 
   activeColumn = 0;
 
