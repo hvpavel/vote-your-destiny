@@ -18,10 +18,18 @@ export class AppComponent {
 
   pollData$ = combineLatest({ poll: this.poll$, votes: this.votes$ }).pipe(
     map(({ poll, votes }) => {
-      if (poll) {
-        return { poll, votes };
+      if (!poll) {
+        return null;
       }
-      return null;
+
+      const votesData: Record<string, number> = {};
+      Object.entries(votes).forEach(([answerId, votesCount]) => {
+        if (poll.answers[answerId]) {
+          const answer = poll.answers[answerId];
+          votesData[answer] = votesCount;
+        }
+      });
+      return { title: poll.question, votes: votesData };
     }),
   );
 

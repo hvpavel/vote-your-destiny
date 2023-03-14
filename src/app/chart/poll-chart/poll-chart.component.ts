@@ -1,9 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { ChartData, ChartOptions } from 'chart.js';
-
-import { Poll } from '../../poll.models';
-
 @Component({
   selector: 'app-poll-chart',
   templateUrl: './poll-chart.component.html',
@@ -12,7 +9,7 @@ import { Poll } from '../../poll.models';
 })
 export class PollChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input()
-  poll!: Poll;
+  title: string = '';
 
   @Input()
   votes: Record<string, number> = {};
@@ -29,10 +26,12 @@ export class PollChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   };
 
   chartData(): ChartData<'bar'> {
+    const answers = Object.keys(this.votes);
+    const votes = Object.values(this.votes);
     const data: ChartData<'bar'> = {
-      labels: Object.values(this.poll.answers),
+      labels: answers,
       datasets: [{
-        data: Object.keys(this.poll.answers).map(answerId => this.votes[answerId] ?? 0),
+        data: votes,
         label: 'Votes',
       }],
     }
